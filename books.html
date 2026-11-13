@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #BBD8FA;
+      padding: 24px;
+    }
+    .card {
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 550px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .error {
+      color: #b00020;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2>Book Data Output</h2>
+    <div id="output"></div>
+  </div>
+
+  <script>
+    async function loadBooks() {
+      const outputDiv = document.getElementById("output");
+
+      try {
+        const response = await fetch("books.json");
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        const books = data.books;
+
+        const firstBookTitle = document.createElement("p");
+        firstBookTitle.textContent = `(a) First Book Title: ${books[0].title}`;
+        outputDiv.appendChild(firstBookTitle);
+
+        const secondBookAuthor = document.createElement("p");
+        secondBookAuthor.textContent = `(b) Second Book Author: ${books[1].author}`;
+        outputDiv.appendChild(secondBookAuthor);
+
+        const genresHeading = document.createElement("p");
+        genresHeading.textContent = "(c) Genres by Book Title:";
+        outputDiv.appendChild(genresHeading);
+
+        const genreList = document.createElement("ul");
+        books.forEach(book => {
+          const li = document.createElement("li");
+          li.textContent = `${book.title}: ${book.genres.join(", ")}`;
+          genreList.appendChild(li);
+        });
+        outputDiv.appendChild(genreList);
+
+      } catch (error) {
+        const errorMsg = document.createElement("p");
+        errorMsg.className = "error";
+        errorMsg.textContent = "Unable to load book data. Please check the JSON file and ensure you are running a local server.";
+        outputDiv.appendChild(errorMsg);
+        console.error("Fetch error:", error);
+      }
+    }
+
+    loadBooks();
+  </script>
+</body>
+</html>
